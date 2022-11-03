@@ -1,8 +1,8 @@
 ## TODO list
-1. functionality
-2. cropper api
-3. navbar
-4. input validation (char length, etc)
+1. remove/edit functionality
+2. navbar dropdown
+3. input validation
+
 
 ## README
 
