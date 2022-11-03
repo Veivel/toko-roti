@@ -1,3 +1,11 @@
+## TODO list
+1. functionality
+2. cropper api
+3. navbar
+4. input validation (char length, etc)
+
+## README
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

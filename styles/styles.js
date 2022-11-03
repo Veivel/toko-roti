@@ -1,0 +1,1 @@
+export const subtleCardClasses = "bg-zinc-800 block p-6 max-w-sm rounded-lg shadow-2xl border border-black";

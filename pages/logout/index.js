@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useGlobalStore } from "../../components/store"
+import useGlobalStore from "../../components/store";
 
 const Logout = () => {
     useGlobalStore.setState({ accessToken: 'none'});
