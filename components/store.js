@@ -2,11 +2,9 @@ import create from 'zustand';
 
 const useGlobalStore = create(set => ({
     accessToken: 'none',
-    user: {},
-    breadArray: [],
-    //
-    targetBread: {},
-    showEditModal: false,
+    breadArray: '-', // array of bread items (initial state is string)
+    targetBread: {}, // target item of editor modal
+    showEditModal: false, 
     showNewModal: false,
 }));
 

@@ -1,7 +1,8 @@
 import { Modal, Button } from "flowbite-react";
 import { toggleNewModal } from "./store";
-import useGlobalStore from "./store";
+import useGlobalStore, { setBreadArray } from "./store";
 import { useState, useRef, useEffect } from "react";
+import axios from "axios";
 import Image from "next/image";
 
 const NewModal = () => {
@@ -10,7 +11,17 @@ const NewModal = () => {
     const initialState = {
         name: '', description: '', expired_date: '', image: undefined,
     }
+    
+    // local modal state
     const [formData, setFormData] = useState(initialState);
+    const [errorMsg, setErrorMsg] = useState("");
+
+    const ax = axios.create({
+        baseURL: 'https://betis23-oprec.herokuapp.com',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
     
     const handleFormChange = (e) => {
         setFormData({
@@ -20,34 +31,40 @@ const NewModal = () => {
         });
     }
 
+    const updateBreadData = () => {
+        ax.get('/roti/')
+        .then(res => {
+            setBreadArray(res.data.data);
+            console.log("bread array updated!");
+        })
+
+    }
+
     const handleFormSubmit = (e) => {
         e.preventDefault();
-        
-        const raw = {
-            "name": formData.name,
-            "description": formData.description,
-            "expired_date": formData.expired_date,
-            "image": formData.image
-        };
         var submitData = new FormData();
         submitData.set("name", formData.name);
         submitData.set("description", formData.description);
         submitData.set("expired_date", formData.expired_date);
         submitData.set("image", formData.image);
 
-        fetch('https://betis23-oprec.herokuapp.com/roti/', {
-            method: 'POST',
-            body: submitData,
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },  
+        ax.post('https://betis23-oprec.herokuapp.com/roti/', submitData)
+        .then(r => {
+            console.log(r);
+            updateBreadData();
+            toggleNewModal();
         })
-        .then(response => console.log(`request made to server:`, submitData, response.text().then(a => console.log(a))))
-        .catch(err => console.log(err));
+        .catch(err => {
+            console.log(err.response.data)
+            setErrorMsg("Invalid data.")
+        });
+
     }
 
+    // reset modal everytime it's closed/opened
     useEffect(() => {
         setFormData(initialState);
+        setErrorMsg("");
     }, [isShow]);
 
     return (
@@ -56,6 +73,7 @@ const NewModal = () => {
                 <Modal.Header>
                     fresh bread from the oven!
                 </Modal.Header>
+
                 <form onSubmit={e => handleFormSubmit(e)} encType='multipart/form-data'>
                     <Modal.Body className="text-black grid grid-cols-2">
                         <label>Name: </label>
@@ -87,8 +105,15 @@ const NewModal = () => {
                             ref={useRef(formData.image)}
                             onChange={e => handleFormChange(e)}
                         />        
-                        <Image src={formData.image ? URL.createObjectURL(formData.image) : "/../public/placeholder.jpeg"} width={200} height={200}></Image>
+                        <Image 
+                            src={formData.image ? URL.createObjectURL(formData.image) : "/../public/placeholder.jpeg"} 
+                            width={200} 
+                            height={200}
+                            alt="uploaded picture"
+                        ></Image>
                     </Modal.Body>
+                    <p className="text-black text-center">{errorMsg}</p>
+
                     <Modal.Footer className="flex place-content-between">
                         <Button color="dark" onClick={toggleNewModal}>
                             <p className="px-2">Cancel</p>
@@ -99,6 +124,7 @@ const NewModal = () => {
                         </Button>
                     </Modal.Footer>
                 </form>
+
             </Modal>
         </div>
     );

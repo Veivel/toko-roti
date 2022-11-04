@@ -8,13 +8,17 @@ const EditorModal = () => {
     const token = useGlobalStore(state => state.accessToken);
     const bread = useGlobalStore(state => state.targetBread);
     const isShow = useGlobalStore(state => state.showEditModal);
-    const accessToken = useGlobalStore(state => state.accessToken);
 
+    // local modal state
     const [displayedImgSrc, setDisplayedImgSrc] = useState(bread.image);
+    const [errorMsg, setErrorMsg] = useState("....");
 
-    useEffect(() => {
-        console.log('toggling modal');
-    }, [isShow]);
+    const ax = axios.create({
+        baseURL: 'https://betis23-oprec.herokuapp.com',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
 
     const initialState = {
         'name': bread.name, 
@@ -25,37 +29,34 @@ const EditorModal = () => {
     const [formData, setFormData] = useState(initialState);
 
 
+    // display correct initial data for each bread
     useEffect(() => {
         setFormData(initialState);
         setDisplayedImgSrc(bread.image);
     }, [bread]);
 
+    // change displayed image everytime formData.image changes
     useEffect(() => {
-        // console.log(formData.image)
         setDisplayedImgSrc(formData.image ? URL.createObjectURL(formData.image) : bread.image)
     }, [formData.image]);
 
     const updateBreadData = () => {
-        fetch('https://betis23-oprec.herokuapp.com/roti/', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-        .then(response => response.json())
+        ax.get('/roti/')
         .then(res => {
-            setBreadArray(res.data);
+            setBreadArray(res.data.data);
             console.log("bread array updated by editorModal")
         })
         toggleEditModal();
     }
 
+    // delete bread with pk 'id'
     function handleDelete(event, id) {
-        console.log("deleting", id);
-        ax.delete(`https://betis23-oprec.herokuapp.com/roti/${id}`)
-        .then(response => console.log(response));
+        ax.delete(`/roti/${id}`)
+        .then(response => {
+            console.log("deleted", id, response);
+            updateBreadData();
+        });
 
-        updateBreadData();
     }
 
     const handleFormChange = (e) => {
@@ -65,13 +66,6 @@ const EditorModal = () => {
             image: e.target.files ? e.target.files[0] : formData.image
         });
     }
-
-    const ax = axios.create({
-        baseURL: 'https://betis23-oprec.herokuapp.com',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    });
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
@@ -89,7 +83,10 @@ const EditorModal = () => {
             console.log("patch request finished", r);
             updateBreadData();
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            console.log("error patching", err.response.data)
+            setErrorMsg("Invalid data.")
+        });
 
     }
 
@@ -129,7 +126,13 @@ const EditorModal = () => {
                             ref={useRef(formData.image)}
                             onChange={e => handleFormChange(e)}
                         />        
-                        <Image src={displayedImgSrc ? displayedImgSrc: "/../public/placeholder.jpeg"} width={200} height={200}placeholder="empty"></Image>
+                        <Image 
+                            src={displayedImgSrc ? displayedImgSrc: "/../public/placeholder.jpeg"} 
+                            width={200}
+                            height={200}
+                            placeholder="empty"
+                            alt="current bread picture"
+                        ></Image>
                     </Modal.Body>
                     <Modal.Footer className="flex place-content-between">
                         <Button color="failure" onClick={e => handleDelete(e, bread.id)}>
