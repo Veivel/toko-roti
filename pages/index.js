@@ -1,20 +1,21 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { Flowbite } from 'flowbite-react';
 import { useTheme, useThemeMode, usePreferences } from 'flowbite-react';
 
 import styles from '../styles/Home.module.css';
 import { LoadingSpinner } from '../components/Placeholders';
 import ItemCard from '../components/ItemCard';
-import Navbar from '../components/Navbar';
 import EditorModal from '../components/EditorModal';
+import NewModal from '../components/NewModal';
 import useGlobalStore, { 
     setAccessToken, 
     setBreadArray, 
     setTargetBread, 
-    toggleEditModal 
+    toggleEditModal, 
+    toggleNewModal
 } from '../components/store';
 
 const Home = () => {
@@ -29,6 +30,9 @@ const Home = () => {
         const token = localStorage.getItem('accessToken');
         return token;
     }
+    
+    useGlobalStore.subscribe(state => state.breadArray, 
+        console.log("bread array change detected! will refresh."))
 
 
     const ax = axios.create({
@@ -38,7 +42,7 @@ const Home = () => {
         }
     });
 
-    const updateBreadData = (ax) => {
+    const updateBreadData = () => {
         fetch('https://betis23-oprec.herokuapp.com/roti/', {
             method: 'GET',
             headers: {
@@ -72,7 +76,7 @@ const Home = () => {
 
     useEffect(() => {
         if (token !== "none") {
-            const data = updateBreadData(ax);
+            const data = updateBreadData();
         }
 
     }, [token]);
@@ -86,15 +90,15 @@ const Home = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             
-            <Navbar />
             <main className={styles.main}>
                 <h1 className={styles.title}>selamat datang di toko rotiku</h1>
                 <EditorModal />
+                <NewModal />
                 <div>
                     <div className='grid grid-cols-3'>
                         {breadArray ? 
                             breadArray.length > 0 ? 
-                                breadArray.map(item => <ItemCard bread={item} editHandler={handleEditButton} />) 
+                                breadArray.sort((a, b) => a.id - b.id).map(item => <ItemCard bread={item} editHandler={handleEditButton} />) 
                             : <LoadingSpinner />
                         : <p className='col-span-3 place-items-center'>Login first!{window.location.replace("/login/")}</p>}
                     </div>

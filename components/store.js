@@ -31,7 +31,7 @@ export const toggleEditModal = () => {
 }
 
 export const toggleNewModal = () => {
-    useGlobalStore.setState({showNewModal: !showNewModal})
+    useGlobalStore.setState(prev => ({showNewModal: !prev.showNewModal}))
 }
 
 export default useGlobalStore;

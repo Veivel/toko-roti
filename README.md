@@ -1,6 +1,5 @@
 ## TODO list
-1. remove/edit functionality
-2. navbar dropdown
+2. footer
 3. input validation
 
 
