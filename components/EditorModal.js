@@ -2,7 +2,7 @@ import { Button, Modal } from "flowbite-react";
 import { useEffect, useState, useRef } from "react";
 import useGlobalStore, { toggleEditModal, setBreadArray } from "./store";
 import axios from "axios";
-import { getDisplayName } from "next/dist/shared/lib/utils";
+import Image from "next/image";
 
 const EditorModal = () => {
     const token = useGlobalStore(state => state.accessToken);
@@ -22,8 +22,8 @@ const EditorModal = () => {
         'expired_date': bread.expired_date, 
         'image': undefined,
     };
-
     const [formData, setFormData] = useState(initialState);
+
 
     useEffect(() => {
         setFormData(initialState);
@@ -129,16 +129,16 @@ const EditorModal = () => {
                             ref={useRef(formData.image)}
                             onChange={e => handleFormChange(e)}
                         />        
-                        <img src={displayedImgSrc}></img>
+                        <Image src={displayedImgSrc ? displayedImgSrc: "/../public/placeholder.jpeg"} width={200} height={200}placeholder="empty"></Image>
                     </Modal.Body>
                     <Modal.Footer className="flex place-content-between">
                         <Button color="failure" onClick={e => handleDelete(e, bread.id)}>
-                            <img src="/icons/trashcan-white.svg" width={20} height={20}></img>
+                            <Image src="/icons/trashcan-white.svg" width={20} height={20}></Image>
                             <p className="px-2">Delete</p>
                         </Button>
                         <Button type="submit" color="success"> 
                             <p className="px-2">Submit</p>
-                            <img src="/icons/submit.svg"></img>
+                            <Image src="/icons/submit.svg" width={20} height={20}></Image>
                         </Button>
                     </Modal.Footer>
                 </form>

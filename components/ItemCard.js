@@ -2,7 +2,6 @@ import { Button, Card } from "flowbite-react";
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import useGlobalStore from "./store";
-import { render } from "react-dom";
 
 const ItemCard = ({ bread, editHandler }) => {
     const [breadState, setBreadState] = useState(bread);
@@ -24,7 +23,7 @@ const ItemCard = ({ bread, editHandler }) => {
     return (
         <div className="ItemCard p-4">
             <Card className="bg-clip-border text-transparent bg-gradient-to-br from-zinc-50 to-stone-100 shadow-xl">
-                <img src={ breadState.image} className="object-cover h-48 max-w-sm rounded-lg shadow-lg" />
+                <Image src={ breadState.image} className="object-cover h-48 max-w-sm rounded-lg shadow-lg" width={300} height={200}/>
                 <div className="grid grid-cols-2">
                     <div>
                         <h4 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">

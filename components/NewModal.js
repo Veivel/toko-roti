@@ -2,6 +2,7 @@ import { Modal, Button } from "flowbite-react";
 import { toggleNewModal } from "./store";
 import useGlobalStore from "./store";
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 
 const NewModal = () => {
     const isShow = useGlobalStore(state => state.showNewModal);
@@ -86,7 +87,7 @@ const NewModal = () => {
                             ref={useRef(formData.image)}
                             onChange={e => handleFormChange(e)}
                         />        
-                        <img src={formData.image ? URL.createObjectURL(formData.image) : ""}></img>
+                        <Image src={formData.image ? URL.createObjectURL(formData.image) : "/../public/placeholder.jpeg"} width={200} height={200}></Image>
                     </Modal.Body>
                     <Modal.Footer className="flex place-content-between">
                         <Button color="dark" onClick={toggleNewModal}>
@@ -94,7 +95,7 @@ const NewModal = () => {
                         </Button>
                         <Button type="submit" color="success"> 
                             <p className="px-2">Submit</p>
-                            <img src="/icons/submit.svg"></img>
+                            <Image src="/icons/submit.svg" width={20} height={20}></Image>
                         </Button>
                     </Modal.Footer>
                 </form>

@@ -98,7 +98,7 @@ const Home = () => {
                     <div className='grid grid-cols-3'>
                         {breadArray ? 
                             breadArray.length > 0 ? 
-                                breadArray.sort((a, b) => a.id - b.id).map(item => <ItemCard bread={item} editHandler={handleEditButton} />) 
+                                breadArray.sort((a, b) => a.id - b.id).map(item => <ItemCard key={item.id} bread={item} editHandler={handleEditButton} />) 
                             : <LoadingSpinner />
                         : <p className='col-span-3 place-items-center'>Login first!{window.location.replace("/login/")}</p>}
                     </div>
